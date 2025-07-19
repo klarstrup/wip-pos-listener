@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "wip-pos-listener",
       script: "./index.ts",
-      interpreter: "tsx",
+      interpreter: "npx tsx",
     },
   ],
 };
