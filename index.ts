@@ -24,20 +24,22 @@ const windowPlayCommand = (path: string, volume: number, rate?: number) =>
     path
   )} $player.Volume = ${volume}; ${playAudio} ${stopAudio}`;
 
-const sound = {
-  async play(path: string, volume = 0.5, rate = 1) {
-    const playCommand =
-      process.platform === "linux"
-        ? linuxPlayCommand(path, volume * 100, rate)
-        : process.platform === "darwin"
-        ? macPlayCommand(path, Math.min(2, volume * 2), rate)
-        : windowPlayCommand(path, volume);
+async function play(path: string, volume = 0.5, rate = 1) {
+  const playCommand =
+    process.platform === "linux" || process.platform === "darwin"
+      ? linuxPlayCommand(path, volume * 100, rate)
+      : process.platform === "win32"
+      ? windowPlayCommand(path, volume)
+      : null;
 
-    await execPromise(playCommand, { windowsHide: true });
-  },
-};
+  if (!playCommand) {
+    console.warn(
+      `tried to play sound on unsupported platform: ${process.platform}`
+    );
+  }
 
-await sound.play("Money.wav");
+  await execPromise(playCommand, { windowsHide: true });
+}
 
 const server = new (simpleDDP as unknown as typeof simpleDDP.default)({
   endpoint: "wss://pos.wip.bar/websocket",
@@ -56,14 +58,13 @@ await salesSub.ready();
 let lastCount = server.collection("sales").fetch({}).length;
 
 console.log({ count: null, lastCount });
-server.collection("sales").onChange(async (d) => {
-  // console.log(d);
+server.collection("sales").onChange(async (_event) => {
   const count = server.collection("sales").fetch({}).length;
 
   console.log({ count, lastCount });
 
   if (lastCount && count && count > lastCount) {
-    await sound.play("Money.wav");
+    await play("Money.wav");
   }
   lastCount = count;
 });
