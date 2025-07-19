@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "module": "NodeNext",
+    "esModuleInterop": true,
+    "target": "esnext",
+    "moduleResolution": "nodenext",
+    "sourceMap": true,
+    "outDir": "dist"
+  },
+  "lib": ["ESNext"]
+}

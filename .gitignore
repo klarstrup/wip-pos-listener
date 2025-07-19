@@ -1,0 +1,8 @@
+node_modules/
+.meteor/local
+production-settings.json
+token.json
+mongodump/
+.deploy/mup.js
+.deploy/settings.json
+.dist
