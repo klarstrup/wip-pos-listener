@@ -6,7 +6,7 @@ import { promisify } from "util";
 const execPromise = promisify(exec);
 
 const linuxPlayCommand = (path: string, volume: number, rate: number) =>
-  `DISPLAY=:0.0 ffplay -autoexit -volume ${path}`;
+  `DISPLAY=:0.0 ffplay -autoexit -volume ${volume} ${path}`;
 
 /* MAC PLAY COMMAND */
 const macPlayCommand = (path: string, volume: number, rate: number) =>
