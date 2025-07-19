@@ -16,7 +16,6 @@
   },
   "dependencies": {
     "isomorphic-ws": "^5.0.0",
-    "simpleddp": "^2.2.4",
-    "sound-play": "^1.1.0"
+    "simpleddp": "^2.2.4"
   }
 }

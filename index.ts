@@ -1,6 +1,41 @@
+import { exec } from "child_process";
 import ws from "isomorphic-ws";
 import simpleDDP from "simpleddp";
-import sound from "sound-play";
+import { promisify } from "util";
+
+const execPromise = promisify(exec);
+
+const linuxPlayCommand = (path: string, volume: number, rate: number) =>
+  `DISPLAY=:0.0 ffplay -autoexit -volume ${path}`;
+
+/* MAC PLAY COMMAND */
+const macPlayCommand = (path: string, volume: number, rate: number) =>
+  `afplay \"${path}\" -v ${volume} -r ${rate}`;
+
+/* WINDOW PLAY COMMANDS */
+const addPresentationCore = `Add-Type -AssemblyName presentationCore;`;
+const createMediaPlayer = `$player = New-Object system.windows.media.mediaplayer;`;
+const loadAudioFile = (path) => `$player.open('${path}');`;
+const playAudio = `$player.Play();`;
+const stopAudio = `Start-Sleep 1; Start-Sleep -s $player.NaturalDuration.TimeSpan.TotalSeconds;Exit;`;
+
+const windowPlayCommand = (path: string, volume: number, rate?: number) =>
+  `powershell -c ${addPresentationCore} ${createMediaPlayer} ${loadAudioFile(
+    path
+  )} $player.Volume = ${volume}; ${playAudio} ${stopAudio}`;
+
+const sound = {
+  async play(path: string, volume = 0.5, rate = 1) {
+    const playCommand =
+      process.platform === "linux"
+        ? linuxPlayCommand(path, volume * 100, rate)
+        : process.platform === "darwin"
+        ? macPlayCommand(path, Math.min(2, volume * 2), rate)
+        : windowPlayCommand(path, volume);
+
+    await execPromise(playCommand, { windowsHide: true });
+  },
+};
 
 await sound.play("Money.wav");
 
