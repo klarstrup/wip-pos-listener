@@ -1,9 +1,8 @@
 import ws from "isomorphic-ws";
-import simpleDDP from "simpleddp"; // ES6
-import playSound from "play-sound"; // ES6
-const player = playSound({});
+import simpleDDP from "simpleddp";
+import sound from "sound-play";
 
-player.play("Money.wav", console.error);
+await sound.play("Money.wav");
 
 const server = new (simpleDDP as unknown as typeof simpleDDP.default)({
   endpoint: "wss://pos.wip.bar/websocket",
@@ -29,7 +28,7 @@ server.collection("sales").onChange(async (d) => {
   console.log({ count, lastCount });
 
   if (lastCount && count && count > lastCount) {
-    player.play("Money.wav", console.error);
+    await sound.play("Money.wav");
   }
   lastCount = count;
 });
