@@ -64,7 +64,7 @@ server.collection("sales").onChange(async (_event) => {
   console.log({ count, lastCount });
 
   if (lastCount && count && count > lastCount) {
-    await play("Money.wav", 1);
+    await play("Money.wav", 0.75);
   }
   lastCount = count;
 });
